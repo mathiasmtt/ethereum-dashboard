@@ -18,10 +18,12 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import include, path
-from ethereum.views import home
+#from ethereum.views import home
+
+from django.contrib import admin
+from django.urls import include, path
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('ethereum/', include('ethereum.urls')),
-    path('', home, name='home'),  # Nueva ruta para la página de inicio
+    path('', include('ethereum.urls')),  # Incluye las rutas de la aplicación ethereum
 ]
