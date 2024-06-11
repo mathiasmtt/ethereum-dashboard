@@ -116,6 +116,18 @@
             document.cookie = "theme=" + currentTheme + "; path=/";
             fetch('/set_theme/?theme=' + currentTheme);
         });
+
+        // Función para ocultar los mensajes después de 3 segundos
+        setTimeout(function() {
+            var alert = document.querySelector('.alert');
+            if (alert) {
+                alert.style.transition = "opacity 0.5s ease-out";
+                alert.style.opacity = "0";
+                setTimeout(function() {
+                    alert.style.display = "none";
+                }, 500);
+            }
+        }, 3000);
     </script>
 </body>
 </html>

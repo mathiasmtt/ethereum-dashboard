@@ -1,6 +1,10 @@
 import requests
 from django.conf import settings
 from decimal import Decimal, InvalidOperation
+import requests
+import os
+from dotenv import load_dotenv
+
 
 def get_ethereum_data(address):
     """
@@ -54,3 +58,44 @@ def get_gas_price():
             return None
     else:
         return None
+
+
+load_dotenv()
+
+ETHERSCAN_API_KEY = os.getenv('ETHERSCAN_API_KEY')
+
+def get_ethereum_balance(address):
+    url = f'https://api.etherscan.io/api?module=account&action=balance&address={address}&tag=latest&apikey={ETHERSCAN_API_KEY}'
+    response = requests.get(url)
+    data = response.json()
+    return data['result']
+
+def get_ethereum_transactions(address):
+    url = f'https://api.etherscan.io/api?module=account&action=txlist&address={address}&startblock=0&endblock=99999999&sort=asc&apikey={ETHERSCAN_API_KEY}'
+    response = requests.get(url)
+    data = response.json()
+    return data['result']
+
+def get_eth_price():
+    url = f'https://api.etherscan.io/api?module=stats&action=ethprice&apikey={ETHERSCAN_API_KEY}'
+    response = requests.get(url)
+    data = response.json()
+    return data['result']
+
+def get_total_supply():
+    url = f'https://api.etherscan.io/api?module=stats&action=ethsupply&apikey={ETHERSCAN_API_KEY}'
+    response = requests.get(url)
+    data = response.json()
+    return data['result']
+
+def get_gas_price():
+    url = f'https://api.etherscan.io/api?module=gastracker&action=gasoracle&apikey={ETHERSCAN_API_KEY}'
+    response = requests.get(url)
+    data = response.json()
+    return data['result']
+
+def format_number(number):
+    return '{:,}'.format(int(number))
+
+def wei_to_ether(wei):
+    return Decimal(wei) / Decimal('1000000000000000000')
