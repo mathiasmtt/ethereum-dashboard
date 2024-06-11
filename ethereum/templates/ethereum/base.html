@@ -1,9 +1,11 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Ethereum Dashboard{% endblock %}</title>
     <!-- Bootstrap CSS CDN -->
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link id="theme-link" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
         .footer {
             position: absolute;
@@ -12,9 +14,34 @@
             height: 60px;
             background-color: #f5f5f5;
         }
+        .dark-mode {
+            background-color: #333;
+            color: #ccc;
+        }
+        .dark-mode .navbar, .dark-mode .footer {
+            background-color: #222;
+        }
+        .dark-mode .card {
+            background-color: #444;
+            color: #ccc;
+        }
+        .dark-mode input::placeholder {
+            color: #ccc !important;
+        }
+        .dark-mode table {
+            background-color: #444;
+            color: #ccc;
+        }
+        .dark-mode th, .dark-mode td {
+            border-color: #555;
+        }
+        .dark-mode .thead-dark th {
+            background-color: #555;
+            color: #ccc;
+        }
     </style>
 </head>
-<body>
+<body class="{% if request.COOKIES.theme == 'dark' %}dark-mode{% endif %}">
     <!-- Header -->
     <header>
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
@@ -34,12 +61,39 @@
                         <a class="nav-link" href="{% url 'dashboard' %}">Dashboard</a>
                     </li>
                 </ul>
+                <ul class="navbar-nav ml-auto">
+                    {% if user.is_authenticated %}
+                        <li class="nav-item">
+                            <form method="post" action="{% url 'logout' %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-link nav-link">Logout</button>
+                            </form>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'login' %}">Login</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'register' %}">Register</a>
+                        </li>
+                    {% endif %}
+                </ul>
+                <button class="btn btn-outline-secondary ml-auto" id="theme-toggle">Toggle Dark/Light</button>
             </div>
         </nav>
     </header>
 
     <!-- Body -->
     <main role="main" class="container">
+        {% if messages %}
+            <div class="mt-3">
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}" role="alert">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
         {% block content %}
         {% endblock %}
     </main>
@@ -55,5 +109,13 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        document.getElementById('theme-toggle').addEventListener('click', function() {
+            var body = document.body;
+            var currentTheme = body.classList.toggle('dark-mode') ? 'dark' : 'light';
+            document.cookie = "theme=" + currentTheme + "; path=/";
+            fetch('/set_theme/?theme=' + currentTheme);
+        });
+    </script>
 </body>
 </html>
