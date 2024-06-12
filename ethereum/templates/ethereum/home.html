@@ -1,10 +1,15 @@
 {% extends 'ethereum/base.html' %}
 
-{% block title %}Home - Ethereum Dashboard{% endblock %}
+{% block title %}Home{% endblock %}
 
 {% block content %}
-    <div class="container">
-        <h1 class="my-4">Welcome to Ethereum Dashboard</h1>
-        <p>This is a simple dashboard to manage Ethereum addresses and view gas prices.</p>
+    <div class="container mt-5">
+        <div class="jumbotron">
+            <h1 class="display-4">Welcome to Ethereum Dashboard</h1>
+            <p class="lead">This is a simple interface to monitor Ethereum addresses and get real-time data from various sources.</p>
+            <hr class="my-4">
+            <p>Use the navigation bar to access different sections of the dashboard.</p>
+            <a class="btn btn-primary btn-lg" href="{% url 'dashboard' %}" role="button">Go to Dashboard</a>
+        </div>
     </div>
 {% endblock %}

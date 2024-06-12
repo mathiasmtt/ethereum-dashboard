@@ -5,7 +5,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .models import EthereumAddress
 from .forms import CustomUserCreationForm, EthereumAddressForm
-from .utils import get_ethereum_balance, get_ethereum_transactions, get_eth_price, get_total_supply, get_gas_price, wei_to_ether, format_number
+from .utils import get_ethereum_balance, get_ethereum_transactions, get_eth_price, get_total_supply, get_gas_price, wei_to_ether, format_number, get_coingecko_data
+
 from decimal import Decimal, InvalidOperation
 
 def register(request):
@@ -46,7 +47,6 @@ def login_view(request):
     return render(request, 'ethereum/login.html', {'form': form})
 
 @login_required
-
 def address_list(request):
     if request.method == 'POST':
         form = EthereumAddressForm(request.POST)
@@ -75,10 +75,12 @@ def dashboard(request):
     total_supply = get_total_supply()
     total_supply_ether = wei_to_ether(total_supply)
     formatted_total_supply = format_number(total_supply_ether)
+    coingecko_data = get_coingecko_data('ethereum')
     return render(request, 'ethereum/dashboard.html', {
         'gas_price': gas_price,
         'eth_price': eth_price,
-        'total_supply': formatted_total_supply
+        'total_supply': formatted_total_supply,
+        'coingecko_data': coingecko_data
     })
 
 @login_required

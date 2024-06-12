@@ -4,7 +4,7 @@ from decimal import Decimal, InvalidOperation
 import requests
 import os
 from dotenv import load_dotenv
-
+from decimal import Decimal
 
 def get_ethereum_data(address):
     """
@@ -60,6 +60,7 @@ def get_gas_price():
         return None
 
 
+
 load_dotenv()
 
 ETHERSCAN_API_KEY = os.getenv('ETHERSCAN_API_KEY')
@@ -99,3 +100,9 @@ def format_number(number):
 
 def wei_to_ether(wei):
     return Decimal(wei) / Decimal('1000000000000000000')
+
+def get_coingecko_data(crypto_id):
+    url = f'https://api.coingecko.com/api/v3/coins/{crypto_id}'
+    response = requests.get(url)
+    data = response.json()
+    return data

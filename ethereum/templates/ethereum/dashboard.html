@@ -4,33 +4,77 @@
 
 {% block content %}
     <div class="container mt-5">
-        <h2>Dashboard</h2>
-        <div class="card mb-3">
-            <div class="card-header">
-                Gas Price
+        <h2 class="mb-4">Dashboard</h2>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card text-white bg-info mb-3">
+                    <div class="card-header">Gas Price</div>
+                    <div class="card-body">
+                        <h5 class="card-title">{{ gas_price.SafeGasPrice }} Gwei</h5>
+                        <p class="card-text">Propose Gas Price: {{ gas_price.ProposeGasPrice }} Gwei</p>
+                        <p class="card-text">Fast Gas Price: {{ gas_price.FastGasPrice }} Gwei</p>
+                    </div>
+                </div>
             </div>
-            <div class="card-body">
-                <h5 class="card-title">{{ gas_price.SafeGasPrice }} Gwei</h5>
-                <p class="card-text">Propose Gas Price: {{ gas_price.ProposeGasPrice }} Gwei</p>
-                <p class="card-text">Fast Gas Price: {{ gas_price.FastGasPrice }} Gwei</p>
+            <div class="col-md-4">
+                <div class="card text-white bg-success mb-3">
+                    <div class="card-header">ETH Price</div>
+                    <div class="card-body">
+                        <h5 class="card-title">${{ eth_price.ethusd }}</h5>
+                        <p class="card-text">Price in BTC: {{ eth_price.ethbtc }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-white bg-warning mb-3">
+                    <div class="card-header">Total Supply of ETH</div>
+                    <div class="card-body">
+                        <h5 class="card-title">{{ total_supply }} ETH</h5>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="card mb-3">
             <div class="card-header">
-                ETH Price
+                CoinGecko Data
             </div>
             <div class="card-body">
-                <h5 class="card-title">${{ eth_price.ethusd }}</h5>
-                <p class="card-text">Price in BTC: {{ eth_price.ethbtc }}</p>
+                <h5 class="card-title">Market Cap Rank: {{ coingecko_data.market_cap_rank }}</h5>
+                <p class="card-text">Current Price (USD): ${{ coingecko_data.market_data.current_price.usd }}</p>
+                <p class="card-text">24h High: ${{ coingecko_data.market_data.high_24h.usd }}</p>
+                <p class="card-text">24h Low: ${{ coingecko_data.market_data.low_24h.usd }}</p>
             </div>
         </div>
         <div class="card mb-3">
             <div class="card-header">
-                Total Supply of ETH
+                ETH Price Chart
             </div>
             <div class="card-body">
-                <h5 class="card-title">{{ total_supply }} ETH</h5>
+                <canvas id="ethPriceChart"></canvas>
             </div>
         </div>
     </div>
+    <script>
+        var ctx = document.getElementById('ethPriceChart').getContext('2d');
+        var ethPriceChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: {{ coingecko_data.market_data.price_change_percentage_24h_in_currency | safe }},
+                datasets: [{
+                    label: 'ETH Price (USD)',
+                    data: {{ coingecko_data.market_data.current_price.usd | safe }},
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
 {% endblock %}
